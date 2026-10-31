@@ -17,15 +17,18 @@
   <nav aria-label="Основна навігація">
     <a href="#exchange">Обмін</a><a href="#market">Ринок</a><a href="#futures">Ф’ючерси</a><a href="#wallet">Гаманець</a><a href="#account">Акаунт</a>
   </nav>
+  <a class="who" id="who" href="#account" hidden><span id="whoav" aria-hidden="true"></span><span id="whoname"></span></a>
 </div></header>
 <div class="banner"><div class="wrap" id="status" role="status">Демо-режим: реальні гроші та активи не використовуються. Завантажую ціни…</div></div>
- 
+
 <main id="top">
 <div class="wrap hero" id="exchange">
+  <div class="hero-bg" aria-hidden="true"><svg viewBox="0 0 570 170" aria-hidden="true"><line x1="24" y1="66" x2="24" y2="108" stroke="#34d399" stroke-width="2"/><rect x="16" y="76" width="16" height="14" fill="#34d399"/><line x1="60" y1="69" x2="60" y2="91" stroke="#f87171" stroke-width="2"/><rect x="52" y="76" width="16" height="7" fill="#f87171"/><line x1="96" y1="74" x2="96" y2="118" stroke="#f87171" stroke-width="2"/><rect x="88" y="83" width="16" height="18" fill="#f87171"/><line x1="132" y1="94" x2="132" y2="126" stroke="#f87171" stroke-width="2"/><rect x="124" y="101" width="16" height="4" fill="#f87171"/><line x1="168" y1="76" x2="168" y2="112" stroke="#34d399" stroke-width="2"/><rect x="160" y="83" width="16" height="21" fill="#34d399"/><line x1="204" y1="57" x2="204" y2="91" stroke="#34d399" stroke-width="2"/><rect x="196" y="76" width="16" height="7" fill="#34d399"/><line x1="240" y1="49" x2="240" y2="95" stroke="#34d399" stroke-width="2"/><rect x="232" y="57" width="16" height="19" fill="#34d399"/><line x1="276" y1="17" x2="276" y2="70" stroke="#34d399" stroke-width="2"/><rect x="268" y="26" width="16" height="31" fill="#34d399"/><line x1="312" y1="23" x2="312" y2="54" stroke="#f87171" stroke-width="2"/><rect x="304" y="30" width="16" height="6" fill="#f87171"/><line x1="348" y1="-8" x2="348" y2="43" stroke="#34d399" stroke-width="2"/><rect x="340" y="5" width="16" height="31" fill="#34d399"/><line x1="384" y1="20" x2="384" y2="46" stroke="#f87171" stroke-width="2"/><rect x="376" y="30" width="16" height="4" fill="#f87171"/><line x1="420" y1="13" x2="420" y2="40" stroke="#34d399" stroke-width="2"/><rect x="412" y="23" width="16" height="8" fill="#34d399"/><line x1="456" y1="15" x2="456" y2="43" stroke="#f87171" stroke-width="2"/><rect x="448" y="30" width="16" height="4" fill="#f87171"/><line x1="492" y1="-8" x2="492" y2="49" stroke="#34d399" stroke-width="2"/><rect x="484" y="4" width="16" height="28" fill="#34d399"/><line x1="528" y1="-6" x2="528" y2="37" stroke="#34d399" stroke-width="2"/><rect x="520" y="2" width="16" height="28" fill="#34d399"/></svg></div>
   <div>
     <h1>Крипторинок. Під твоїм контролем.</h1>
     <p class="lead">Стеж за цінами, досліджуй ринок і пробуй обмін на демобалансі. Нічого не треба встановлювати.</p>
     <div class="cta"><a class="btn pri" href="#market">Відкрити ринок</a><a class="btn" href="#wallet">Мій демогаманець</a></div>
+    <div class="pulse" id="pulse"></div>
   </div>
   <form class="card swap" id="swap" novalidate>
     <h2>Обмін</h2>
@@ -43,33 +46,41 @@
     <button class="btn pri" type="submit">Обміняти</button>
   </form>
 </div>
- 
+
 <section id="market"><div class="wrap">
   <h2>Ринок</h2>
   <p class="sub">Обери монету в таблиці, щоб побачити її графік.</p>
   <div class="tools">
     <input id="q" type="search" placeholder="Пошук: BTC, Ethereum…" aria-label="Пошук монети">
+    <button class="btn" id="favonly" type="button" aria-pressed="false">★ Обране</button>
     <div class="seg" id="sorts" role="group" aria-label="Сортування">
       <button data-k="cap" aria-pressed="true">Обіг</button><button data-k="p" aria-pressed="false">Ціна</button><button data-k="c" aria-pressed="false">Зміна</button>
     </div>
   </div>
   <div class="market">
     <div class="tw"><table class="mini">
-      <thead><tr><th>Монета</th><th>Ціна</th><th>24 год</th><th class="hm">Обіг 24 год</th></tr></thead>
+      <thead><tr><th>Монета</th><th>Ціна</th><th>24 год</th><th class="hs">Тренд</th><th class="hm">Обіг 24 год</th></tr></thead>
       <tbody id="tbody"></tbody>
     </table></div>
     <div class="card chart">
       <h3 id="cname">Bitcoin</h3>
       <div class="px num" id="cpx">—</div>
-      <div class="seg" id="periods" role="group" aria-label="Період" style="width:max-content;margin-bottom:12px">
-        <button aria-pressed="false">1H</button><button aria-pressed="true">24H</button><button aria-pressed="false">7D</button><button aria-pressed="false">30D</button>
+      <div class="seg" id="periods" role="group" aria-label="Період" style="width:max-content;max-width:100%;margin-bottom:12px">
+        <button data-p="1m" aria-pressed="false">1 хв</button><button data-p="5m" aria-pressed="false">5 хв</button><button data-p="30m" aria-pressed="false">30 хв</button><button data-p="1H" aria-pressed="false">1 год</button><button data-p="24H" aria-pressed="true">24 год</button><button data-p="7D" aria-pressed="false">7 д</button><button data-p="30D" aria-pressed="false">30 д</button>
       </div>
+      <div class="seg" id="ctype" role="group" aria-label="Тип графіка" style="width:max-content;margin-bottom:12px"><button data-t="line" aria-pressed="true">Лінія</button><button data-t="candle" aria-pressed="false">Свічки</button></div>
       <canvas id="cv" role="img" aria-label="Графік ціни обраної монети"></canvas>
       <p class="note" id="cnote" role="status"></p>
     </div>
   </div>
+  <div class="card" style="margin-top:20px">
+    <h3 style="font-size:18px;margin-bottom:6px">Сповіщення про ціну</h3>
+    <p class="sub" style="margin-bottom:14px">Задай ціну, і сайт повідомить, коли монета до неї дійде. Працює, поки сторінка відкрита.</p>
+    <div class="alert-row"><div class="field"><select id="acoin" aria-label="Монета для сповіщення" style="width:100%"></select></div><div class="field"><input id="aprice" inputmode="decimal" autocomplete="off" placeholder="Ціна, USD" aria-label="Ціна для сповіщення"></div><button class="btn pri" type="button" id="aadd">Додати</button></div>
+    <ul class="hist" id="alist" style="margin-top:14px"></ul>
+  </div>
 </div></section>
- 
+
 <section id="futures"><div class="wrap">
   <h2>Ф’ючерси</h2>
   <p class="sub">Long — ставка на зростання ціни, Short — на падіння. Плече збільшує і прибуток, і збиток. Якщо ціна дійде до рівня ліквідації, маржа згорає. Усе на умовні кошти.</p>
@@ -82,6 +93,10 @@
       <div class="field"><select id="flev" style="flex:1"><option value="2">2×</option><option value="5">5×</option><option value="10" selected>10×</option><option value="25">25×</option><option value="50">50×</option></select></div>
       <label for="fmargin">Маржа, USDT</label>
       <div class="field"><input id="fmargin" inputmode="decimal" autocomplete="off" value="100"><button type="button" class="max" id="fmax">Макс</button></div>
+      <label for="fsl">Стоп-лосс, ціна (необов’язково)</label>
+      <div class="field"><input id="fsl" inputmode="decimal" autocomplete="off" placeholder="напр. 65000"></div>
+      <label for="ftp">Тейк-профіт, ціна (необов’язково)</label>
+      <div class="field"><input id="ftp" inputmode="decimal" autocomplete="off" placeholder="напр. 90000"></div>
       <div class="rows num">
         <div><span>Доступно</span><b id="favail">—</b></div>
         <div><span>Ціна входу</span><b id="fprice">—</b></div>
@@ -94,13 +109,13 @@
     </div>
     <div>
       <div class="card"><h3 style="font-size:18px;margin-bottom:14px">Відкриті позиції</h3>
-        <div class="tw" style="border:0;background:none"><table class="stack"><thead><tr><th>Позиція</th><th>Маржа</th><th>Вхід</th><th>Зараз</th><th>Ліквідація</th><th>Прибуток</th><th></th></tr></thead><tbody id="fbody"></tbody></table></div>
+        <div class="tw" style="border:0;background:none"><table class="stack"><thead><tr><th>Позиція</th><th>Маржа</th><th>Вхід</th><th>Зараз</th><th>Ліквідація</th><th>SL / TP</th><th>Прибуток</th><th></th></tr></thead><tbody id="fbody"></tbody></table></div>
       </div>
       <div class="card" style="margin-top:20px"><h3 style="font-size:18px;margin-bottom:14px">Закриті позиції</h3><ul class="hist" id="fhist"></ul></div>
     </div>
   </div>
 </div></section>
- 
+
 <section id="wallet"><div class="wrap">
   <h2>Демогаманець</h2>
   <p class="sub">Старт — 1000 USDT умовних коштів. Купуй монети й продавай їх пізніше: ціна вирішить, заробиш ти чи втратиш. Усе зберігається в цьому браузері.</p>
@@ -122,10 +137,10 @@
     </div>
   </div>
 </div></section>
- 
+
 <section id="account"><div class="wrap">
   <h2>Акаунт</h2>
-  <p class="sub">Демопрофіль зберігається лише в цьому браузері. Пароль і дані карти не потрібні й не збираються.</p>
+  <p class="sub">У кожного акаунта свій баланс, позиції та історія. Дані зберігаються в цьому браузері, пароль і дані карти не потрібні й не збираються.</p>
   <div class="acc">
     <form class="card" id="prof" novalidate>
       <label for="nick">Нікнейм</label>
@@ -141,14 +156,14 @@
       <p class="sub" id="pmail" style="margin:4px 0 12px">Профіль ще не збережено</p>
       <span class="tag">Демопрофіль · без верифікації</span>
       <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="addphoto" type="button">Додати фото</button><button class="btn" id="rmphoto" type="button" hidden>Прибрати фото</button><input type="file" id="photo" accept="image/*" hidden></div>
-      <div style="margin-top:18px"><button class="btn" id="logout">Скинути профіль і баланс</button></div>
+      <div style="margin-top:18px"><button class="btn" id="logout">Вийти з акаунта</button></div>
     </div>
   </div>
 </div></section>
 </main>
- 
+
 <footer><div class="wrap">© 2026 CryptoNest. Демонстраційна платформа: не фінансова порада й не реальний обмінник.</div></footer>
- 
+
 <dialog id="dlg">
   <h3>Підтвердь обмін</h3>
   <div class="rows num" id="dlgrows"></div>
@@ -156,19 +171,18 @@
 </dialog>
 <dialog id="gate" aria-labelledby="gtitle">
   <form id="gform" novalidate>
-    <h3 id="gtitle">Створи акаунт</h3>
-    <p class="note" style="margin:0 0 16px">Щоб почати, потрібен демоакаунт. Пароль і дані карти не потрібні, реальні гроші не використовуються.</p>
+    <h3 id="gtitle">Вхід в акаунт</h3>
+    <p class="note" style="margin:0 0 16px">Введи нікнейм і email. Новий email створить акаунт, а з тим самим email і нікнеймом ти повернешся до свого балансу. У кожного свій акаунт, пароль і дані карти не потрібні, реальні гроші не використовуються.</p>
     <label for="gnick">Нікнейм</label>
-    <div class="field" style="margin-bottom:14px"><input id="gnick" maxlength="24" autocomplete="nickname" autofocus style="width:100%"></div>
+    <div class="field" style="margin-bottom:14px"><input id="gnick" maxlength="24" autocomplete="nickname" style="width:100%"></div>
     <label for="gmail">Email</label>
     <div class="field"><input id="gmail" type="email" autocomplete="email" style="width:100%"></div>
     <div class="msg" id="gmsg" role="alert" style="margin-top:10px"></div>
-    <button class="btn pri" type="submit" style="width:100%">Створити акаунт</button>
+    <button class="btn pri" type="submit" style="width:100%">Увійти або створити акаунт</button>
   </form>
 </dialog>
 <div id="toasts" aria-live="polite"></div>
- 
+
 <script src="script.js" defer></script>
 </body>
 </html>
- 

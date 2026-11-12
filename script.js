@@ -64,7 +64,7 @@ function clean(d){
 }
 const SKEY='cryptonest-accounts-v1',CKEY='cryptonest-current',LKEY='cryptonest-last',mem={};
 let curKey=null;
-/* Акаунти: дані всіх в localStorage, а хто увійшов у цій вкладці — у sessionStorage (тож у різних вкладках можуть бути різні люди) */
+
 function kvGet(st,k){const m=st+k;if(m in mem)return mem[m];try{return (st==='s'?sessionStorage:localStorage).getItem(k)}catch(e){return null}}
 function kvSet(st,k,v){const m=st+k;try{(st==='s'?sessionStorage:localStorage).setItem(k,v);delete mem[m]}catch(e){mem[m]=v;if(st==='l'&&!saveWarned){saveWarned=true;toast('Браузер не дозволяє зберігати дані. Акаунти й баланс зникнуть після перезавантаження.',true)}}}
 function kvDel(st,k){delete mem[st+k];try{(st==='s'?sessionStorage:localStorage).removeItem(k)}catch(e){}}
@@ -99,7 +99,7 @@ const pct=n=>(n>=0?'+':'')+n.toFixed(2)+'%';
 function cap(n){return n>=1e12?'$'+(n/1e12).toFixed(2)+' трлн':n>=1e9?'$'+(n/1e9).toFixed(1)+' млрд':'$'+(n/1e6).toFixed(0)+' млн'}
 function toast(t,err){const e=document.createElement('div');e.className='toast'+(err?' err':'');e.textContent=t;$('#toasts').append(e);setTimeout(()=>e.remove(),3500)}
 
-/* Форми працюють без нативної відправки (у пісочницях вона заблокована) */
+
 function bindForm(form,fn){
   form.addEventListener('submit',e=>e.preventDefault());
   form.addEventListener('click',e=>{if(e.target.closest('button[type=submit]')){e.preventDefault();fn()}});
@@ -112,7 +112,7 @@ function labels(r,a){[...r.cells].forEach((c,i)=>{c.dataset.label=a[i]||''})}
 
 db=load();
 
-/* Ринок: ціни (Binance, запасно CoinGecko), таблиця, історія та графік */
+
 const BIN='https://data-api.binance.vision/api/v3',GECKO='https://api.coingecko.com/api/v3';
 let geckoAt=0,SYMS=COINS.filter(c=>c.s!=='USDT').map(c=>c.s+'USDT');
 const IV={'1m':['1s',60],'5m':['1s',300],'30m':['1m',30],'1H':['1m',60],'24H':['15m',96],'7D':['1h',168],'30D':['4h',180]};
@@ -140,7 +140,7 @@ async function fromBinance(){
   let d;
   try{d=await getJSON(BIN+'/ticker/24hr?symbols='+encodeURIComponent(JSON.stringify(SYMS)))}
   catch(e){
-    if(String(e.message)!=='400')throw e;   /* якась пара відсутня на біржі: відфільтруємо */
+    if(String(e.message)!=='400')throw e;  
     const all=await getJSON(BIN+'/ticker/24hr'),have=new Set(all.map(x=>x.symbol));
     SYMS=SYMS.filter(x=>have.has(x));d=all.filter(x=>SYMS.includes(x.symbol));
   }
@@ -197,7 +197,7 @@ function renderTable(){
   });
 }
 
-/* Історія: Binance (свічки), запасно CoinGecko, в крайньому разі — підписана симуляція */
+
 async function loadHistory(){
   const c=by(sel),key=c.s+period,tok=++htoken,hit=HCACHE[key];
   if(hit&&Date.now()-hit.at<(TTL[period]||60000)){hstate={status:'ok',pts:hit.pts,src:hit.src};renderChart();return}
@@ -229,7 +229,7 @@ function simPts(c){
   for(let i=1;i<60;i++)v.unshift(v[0]*(1+(r()-.5)*vl));
   return v.map((y,i)=>[now-span+span*i/59,y]);
 }
-/* Остання точка графіка завжди дорівнює поточній ціні, тож лінія рухається наживо */
+
 function visiblePts(){
   const c=by(sel),ms=RANGE[period];let p=hstate.pts;
   if(!p||!p.length){const t=Date.now();return [[t-1000,c.p],[t,c.p]]}
@@ -289,7 +289,7 @@ function hoverAt(e){
   const r=$('#cv').getBoundingClientRect();renderChart(geom.idx(e.clientX-r.left));
 }
 
-/* Без зв'язку з біржею ціни симулюються, щоб було на чому заробляти й втрачати */
+
 setInterval(()=>{
   if(live||lastOk||document.hidden)return;
   coins.forEach(c=>{if(STABLE.has(c.s))return;const d=(Math.random()-.5)*.006;c.p*=1+d;c.c+=d*100});
@@ -362,7 +362,7 @@ $('#reset').onclick=()=>{resetAccount();renderAll();toast('Баланс, поз�
 
 $('#max').onclick=()=>{const f=$('#from').value;$('#amt').value=String(Number((db.wallet[f]||0).toPrecision(12)));renderSwap()};
 
-/* Ф'ючерси: Long/Short з плечем, комісією та ліквідацією (на умовні кошти) */
+
 const FEE_F=.0005,MM=.005,MINM=10;
 let fside='long';
 const upnl=p=>{const m=by(p.sym).p;return p.side==='long'?p.size*(m-p.entry):p.size*(p.entry-m)};
@@ -436,7 +436,7 @@ $('#fside').addEventListener('click',e=>{const b=e.target.closest('button');if(!
 ['#fcoin','#flev','#fmargin','#fsl','#ftp'].forEach(s=>$(s).addEventListener('input',renderFutures));
 $('#fmax').onclick=()=>{const lev=+$('#flev').value;$('#fmargin').value=String(Math.floor((db.wallet.USDT||0)/(1+lev*FEE_F)*100)/100);renderFutures()};
 
-/* Додатково: мініграфіки, сповіщення про ціну, пульс ринку, рейтинг, перемикачі */
+
 let sparkAt=0;const spark={};
 function sparkSvg(s){
   const d=spark[s];if(!d||d.length<2)return document.createTextNode('');
@@ -453,7 +453,6 @@ async function loadSparks(){
   await Promise.all([w(),w(),w(),w(),w(),w()]);renderTable();
 }
 
-/* Сповіщення про ціну */
 function fillAlertSel(){$('#acoin').innerHTML=coins.filter(c=>!STABLE.has(c.s)).map(c=>`<option value="${c.s}">${c.s}</option>`).join('');$('#acoin').value='BTC'}
 function renderAlerts(){
   const ul=$('#alist');ul.textContent='';
@@ -488,7 +487,7 @@ function checkAlerts(){
   if(db.alerts.length!==before){save();renderAlerts()}
 }
 
-/* Пульс ринку на першому екрані */
+
 function renderPulse(){
   const el=$('#pulse');if(!el)return;
   const L=['BTC','ETH','SOL'];
@@ -532,7 +531,7 @@ bindForm($('#gform'),()=>{const nick=$('#gnick').value.trim(),mail=$('#gmail').v
   $('#gate').close();renderAll();toast(r.isNew?'Акаунт створено. Ласкаво просимо, '+db.profile.nick+'!':'З поверненням, '+db.profile.nick+'!');
 });
 
-/* Фото профілю: стискаємо до квадрата 256 px і зберігаємо в браузері */
+
 $('#addphoto').onclick=()=>$('#photo').click();
 $('#photo').addEventListener('change',()=>{
   const f=$('#photo').files[0];$('#photo').value='';
